@@ -1,12 +1,18 @@
-pipeline {
-    agent any
+node {
+    stage('Checkout') {
+        // Взима кода според SCM настройките на джоба
+        checkout scm
+    }
 
-    stages {
-        stage('DEBUG') {
-            steps {
-                echo '*** DEBUG: Този Jenkinsfile е от GitHub репото! ***'
-                error 'Спираме нарочно, за да видим, че се изпълнява.'
-            }
-        }
+    stage('Restore') {
+        bat 'dotnet restore SeleniumIde.sln'
+    }
+
+    stage('Build') {
+        bat 'dotnet build SeleniumIde.sln --configuration Debug --no-restore'
+    }
+
+    stage('Test') {
+        bat 'dotnet test SeleniumIde.sln --configuration Debug --no-build'
     }
 }
