@@ -1,9 +1,4 @@
 node {
-    stage('Checkout') {
-        // Взима кода според SCM настройките на джоба
-        checkout scm
-    }
-
     stage('Restore') {
         bat 'dotnet restore SeleniumIde.sln'
     }
