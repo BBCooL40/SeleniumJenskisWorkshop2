@@ -2,27 +2,10 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
+        stage('DEBUG') {
             steps {
-                checkout scm
-            }
-        }
-
-        stage('Restore') {
-            steps {
-                bat 'dotnet restore SeleniumIde.sln'
-            }
-        }
-
-        stage('Build') {
-            steps {
-                bat 'dotnet build SeleniumIde.sln --configuration Debug --no-restore'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                bat 'dotnet test SeleniumIde.sln --configuration Debug --no-build'
+                echo '*** DEBUG: Този Jenkinsfile е от GitHub репото! ***'
+                error 'Спираме нарочно, за да видим, че се изпълнява.'
             }
         }
     }
