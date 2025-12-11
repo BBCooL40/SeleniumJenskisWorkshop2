@@ -1,22 +1,39 @@
-node {
-    stage('Checkout') {
-        // Ръчно дърпаме кода, както досега
-        bat 'if not exist .git (git clone https://github.com/BBCooL40/SeleniumJenskisWorkshop2.git . ) else (git pull)'
-    }
+pipeline {
+    agent any
 
-    stage('Restore') {
-        bat 'dotnet restore SeleniumIde.sln'
-    }
+    stages {
+        stage('Checkout') {
+            steps {
+                bat 'if not exist .git (git clone https://github.com/BBCooL40/SeleniumJenskisWorkshop2.git . ) else (git pull)'
+            }
+        }
 
-    stage('Build') {
-        bat 'dotnet build SeleniumIde.sln --configuration Debug --no-restore'
-    }
+        stage('Restore') {
+            steps {
+                bat 'dotnet restore SeleniumIde.sln'
+            }
+        }
 
-    stage('Test') {
-        // Генерираме едновременно TRX и JUnit
-        bat 'dotnet test SeleniumIde.sln --configuration Debug --no-build --logger "trx;LogFileName=TestResults.trx" --logger "junit;LogFileName=TestResults.xml"'
+        stage('Build') {
+            steps {
+                bat 'dotnet build SeleniumIde.sln --configuration Debug --no-restore'
+            }
+        }
 
-        // Казваме на Jenkins къде е JUnit репорта
-        junit 'SeleniumIDE/TestResults/TestResults.xml'
+        stage('Test') {
+            steps {
+                bat '''
+dotnet test SeleniumIde.sln --configuration Debug --no-build ^
+  --logger "trx;LogFileName=TestResults.trx" ^
+  --logger "junit;LogFileName=TestResults.xml"
+'''
+
+                // JUnit репорт в Jenkins UI (Tests таба – това вече ти работи)
+                junit 'SeleniumIDE/TestResults/TestResults.xml'
+
+                // ТУК качваме файловете като артефакти
+                archiveArtifacts artifacts: 'SeleniumIDE/TestResults/*', fingerprint: true
+            }
+        }
     }
 }
