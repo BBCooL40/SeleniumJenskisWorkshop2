@@ -22,16 +22,12 @@ pipeline {
 
         stage('Test') {
             steps {
-                bat '''
-dotnet test SeleniumIde.sln --configuration Debug --no-build ^
-  --logger "trx;LogFileName=TestResults.trx" ^
-  --logger "junit;LogFileName=TestResults.xml"
-'''
+                bat 'dotnet test SeleniumIde.sln --configuration Debug --no-build --logger "trx;LogFileName=TestResults.trx" --logger "junit;LogFileName=TestResults.xml"'
 
-                // JUnit репорт в Jenkins UI (Tests таба – това вече ти работи)
+                // JUnit репорт в Jenkins UI (Tests таба)
                 junit 'SeleniumIDE/TestResults/TestResults.xml'
 
-                // ТУК качваме файловете като артефакти
+                // Качваме файловете като артефакти
                 archiveArtifacts artifacts: 'SeleniumIDE/TestResults/*', fingerprint: true
             }
         }
