@@ -28,10 +28,10 @@ dotnet test SeleniumIde.sln --configuration Debug --no-build ^
   --logger "junit;LogFileName=TestResults.xml"
 '''
 
-                // JUnit репорт – за да има таб "Tests"
+                // 1) Подава JUnit репорта към Jenkins (таб "Tests")
                 junit 'SeleniumIDE/TestResults/TestResults.xml'
 
-                // Артефакти – да можеш да си сваляш .trx и .xml
+                // 2) Качва файловете като артефакти към билда
                 archiveArtifacts artifacts: 'SeleniumIDE/TestResults/*', fingerprint: true
             }
         }
