@@ -2,12 +2,6 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
-            steps {
-                // Jenkins ще изтегли репото в workspace-а на job-а
-                checkout scm
-            }
-        }
 
         stage('Restore') {
             steps {
@@ -32,7 +26,7 @@ dotnet test SeleniumIde.sln --configuration Debug --no-build ^
                 // Показваме резултатите в Tests таб-а
                 junit 'SeleniumIDE/TestResults/TestResults.xml'
 
-                // Качваме xml + trx като артефакти
+                // Качваме файловете като artifacts
                 archiveArtifacts artifacts: 'SeleniumIDE/TestResults/*', fingerprint: true
             }
         }
