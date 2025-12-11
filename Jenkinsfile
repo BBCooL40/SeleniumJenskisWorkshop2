@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     stages {
-
         stage('Restore') {
             steps {
                 bat 'dotnet restore SeleniumIde.sln'
@@ -23,10 +22,7 @@ dotnet test SeleniumIde.sln --configuration Debug --no-build ^
   --logger "junit;LogFileName=TestResults.xml"
 '''
 
-                // Показваме резултатите в Tests таб-а
                 junit 'SeleniumIDE/TestResults/TestResults.xml'
-
-                // Качваме файловете като artifacts
                 archiveArtifacts artifacts: 'SeleniumIDE/TestResults/*', fingerprint: true
             }
         }
