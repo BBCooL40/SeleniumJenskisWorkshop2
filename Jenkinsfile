@@ -2,12 +2,6 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
-            steps {
-                bat 'if not exist .git (git clone https://github.com/BBCooL40/SeleniumJenskisWorkshop2.git . ) else (git pull)'
-            }
-        }
-
         stage('Restore') {
             steps {
                 bat 'dotnet restore SeleniumIde.sln'
@@ -27,13 +21,17 @@ dotnet test SeleniumIde.sln --configuration Debug --no-build ^
   --logger "trx;LogFileName=TestResults.trx" ^
   --logger "junit;LogFileName=TestResults.xml"
 '''
-
-                // Показваме резултатите в Tests таб-а
-                junit 'SeleniumIDE/TestResults/TestResults.xml'
-
-                // Качваме файловете като артефакти
-                archiveArtifacts artifacts: 'SeleniumIDE/TestResults/*', fingerprint: true
             }
+        }
+    }
+
+    post {
+        always {
+            // JUnit репорт за Tests таба
+            junit 'SeleniumIDE/TestResults/TestResults.xml'
+
+            // TRX + XML като артефакти
+            archiveArtifacts artifacts: 'SeleniumIDE/TestResults/*', fingerprint: true, allowEmptyArchive: true
         }
     }
 }
